@@ -1,0 +1,497 @@
+
+*{
+  margin: 0;
+  padding: 0;
+  font-family: Arial;
+ /* width: 100%; */
+}
+
+
+body{
+  background: #0b1220;
+  color: white;
+}
+
+.container {
+  display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: #111827;
+  height: 100vh;
+  padding: 20px;
+}
+
+.sidebar h2 {
+  margin-bottom: 20px;
+}
+
+.sidebar ul {
+  list-style: none;
+}
+
+.sidebar li {
+  padding: 10px;
+  margin: 5px 0;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.sidebar li.active,
+.sidebar li:hover {
+  background: #1f2937;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add_member{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.actions button {
+  margin-left: 10px;
+  padding: 8px 12px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Cards */
+.card {
+  background: #111827;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 15px;
+}
+
+/* Project Info */
+.project-info {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Progress */
+.progress-bar {
+  width: 200px;
+  height: 6px;
+  background: #374151;
+  border-radius: 10px;
+  margin-top: 5px;
+}
+
+.progress-bar div {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 10px;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  gap: 10px;
+
+}
+
+.stats .card {
+  flex: 1;
+  text-align: center;
+  border-color: #87ceeb40;
+}
+
+
+/* Tabs */
+.tabs {
+  margin-top: 15px;
+}
+
+.tabs button {
+  margin-right: 10px;
+  padding: 8px 12px;
+  border: none;
+  background: #1f2937;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background: #2563eb;
+}
+
+/* Content */
+.content {
+  display: flex;
+  gap: 15px;
+}
+
+/* Table */
+table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+tr {
+  border-bottom: 1px solid #374151;
+}
+
+/* Status Colors */
+.green { color: #10b981; }
+.red { color: #ef4444; }
+.yellow { color: #f59e0b; }
+.blue { color: #3b82f6; }
+
+/* Updates */
+.updates {
+  width: 250px;
+}
+
+
+
+
+
+
+
+
+
+
+const style = document.createElement("style");
+style.innerHTML = `
+
+/* ===== Global SLM vs LLM background ===== */
+body {
+  background:
+    radial-gradient(1200px 600px at 12% -18%, rgba(99,102,241,.18), transparent 40%),
+    radial-gradient(1000px 500px at 88% 12%, rgba(14,165,233,.14), transparent 45%),
+    #050714 !important;
+  color: #e5e7eb;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  background: linear-gradient(
+    180deg,
+    rgba(8,10,25,.95),
+    rgba(5,7,20,.98)
+  ) !important;
+
+  border-right: 1px solid rgba(255,255,255,.05);
+}
+
+/* ===== Panels / Cards / Containers ===== */
+.card, .stat-card, .panel, .summary-box, .task-summary {
+  background: linear-gradient(
+    180deg,
+    rgba(20,24,45,.75),
+    rgba(10,13,30,.9)
+  ) !important;
+
+  border: 1px solid rgba(255,255,255,.06); 
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease,
+    border-color .25s ease;
+}
+
+.card:hover, .stat-card:hover, .panel:hover,
+.summary-box:hover, .task-summary:hover {
+  transform: translateY(-4px);
+  border-color: rgba(99,102,241,.45);
+  box-shadow:
+    0 15px 40px rgba(0,0,0,.6),
+    0 0 0 1px rgba(99,102,241,.25);
+}
+.no-hover:hover {
+  transform: none !important;
+}
+
+
+/* ===== Metric pills (Total / Completed / Pending / Overdue) ===== */
+.metric, .task-metric {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px;
+}
+
+
+
+
+
+
+
+
+
+/* ===== Global font ===== */
+html, body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.55;
+  color: #e5e7eb;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+h4, h5, h6 {
+  font-size: 14px;
+  font-weight: 600;
+}
+.sidebar,
+.sidebar a,
+.nav-item {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #c7cbe0;
+}
+
+.sidebar a:hover,
+.nav-item:hover {
+  color: #ffffff;
+}
+.metric-value,
+.stat-number,
+.kpi-value {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.metric-label,
+.stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #9aa3b2;
+}
+button,
+.btn,
+.action-btn {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+table {
+  font-size: 13px;
+}
+
+thead th {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9aa3b2;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+tbody td {
+  font-size: 13px;
+  font-weight: 500;
+}
+.status-completed,
+.status-progress,
+.status-pending,
+.status-overdue {
+  font-size: 12px;
+  font-weight: 600;
+}
+small, .muted, .caption {
+  font-size: 12px;
+  color: #9aa3b2;
+}
+
+strong {
+  font-weight: 600;
+}
+
+
+
+
+
+.edit-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #60a5fa;
+  font-size: 14px;
+}
+
+.edit-btn:hover {
+  color: #93c5fd;
+}
+
+
+
+
+
+.edit-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 6px 8px;
+
+  color: #e5e7eb;
+  font-size: 13px;
+  font-family: inherit;
+
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.edit-input:focus {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+
+
+/*---------------------------Kanban css------------------------------- */
+
+.kanban-board {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.kanban-column {
+  flex: 1;
+  background: #111827;
+  border-radius: 16px;
+  padding: 12px;
+  background: #94a2b2ab;
+}
+
+.kanban-header {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #e5e7eb;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 8px;
+  text-align: center;
+}
+
+.kanban-card {
+ background: #0b122087;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-left: 3px solid transparent;
+    /* border: 2px solid #87ceeb40; */
+}
+
+.kanban-card h4 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+
+.kanban-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.assignee {
+    background: #1f2937;
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+
+.date {
+  color: #9aa3b2;
+}
+
+/* Status Colors */
+.status-pending { border-left-color: #ed3939c7; }
+.status-progress { border-left-color: #f5f521bd; }
+.status-done { border-left-color: #34f534; }
+
+.status-pending .assignee{color:#ed3939c7}
+.status-progress .assignee{color:#f5f521bd}
+.status-done .assignee{color:#34f534}
+
+.status-pending h4{color:#ed3939c7}
+.status-progress h4{color:#f5f521bd}
+.status-done h4{color: #34f534;}
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.header .head_icon {
+  position: absolute;
+  left: 12px;
+}
+.header .head_titile {
+  text-align: center;
+}
+
+
+
+
+.muted {
+  font-size: 12px;
+  color: #9aa3b2;
+}
+
+
+
+
+select.edit-input {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  padding-right: 32px;
+}
+
+select.edit-input option {
+  background: #111827;
+  color: #e5e7eb;
+}
+
+
