@@ -20,6 +20,67 @@ const statusColumns = [
   { key: 'Done', label: 'DONE', className: 'status-done' },
 ];
 
+const DEFAULT_ENDPOINTS = {
+  projects: 'https://jsonplaceholder.typicode.com/albums?_limit=5',
+  users: 'https://jsonplaceholder.typicode.com/users',
+  tasks: 'https://jsonplaceholder.typicode.com/todos?_limit=12',
+};
+
+const buildResourceUrl = (resource) => {
+  const explicitUrl = import.meta.env[`VITE_${resource.toUpperCase()}_API`];
+  if (explicitUrl) return explicitUrl;
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/g, '');
+  if (baseUrl) return `${baseUrl}/${resource}`;
+
+  return DEFAULT_ENDPOINTS[resource];
+};
+
+const normalizeList = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (payload?.projects && Array.isArray(payload.projects)) return payload.projects;
+  if (payload?.users && Array.isArray(payload.users)) return payload.users;
+  if (payload?.tasks && Array.isArray(payload.tasks)) return payload.tasks;
+  if (payload?.data && Array.isArray(payload.data)) return payload.data;
+  if (payload?.items && Array.isArray(payload.items)) return payload.items;
+  return [];
+};
+
+const buildDate = (id) => {
+  const day = 5 + ((id || 0) % 20);
+  return `${day} Apr`;
+};
+
+const mapTaskData = (tasks, projects, users) => {
+  if (!tasks.length) return [];
+
+  return tasks.map((task) => {
+    const assigneeId = task.assigneeId ?? task.userId;
+    const projectIndex = typeof assigneeId === 'number' ? (assigneeId - 1) % projects.length : 0;
+    const project = projects[projectIndex] || {};
+    const user = users.find((userItem) => userItem.id === assigneeId) || {};
+
+    return {
+      ...task,
+      title: task.title || task.name || 'Untitled task',
+      assigneeId,
+      projectId: task.projectId ?? project.id ?? projectIndex + 1,
+      project: project.title || project.name || 'Unknown project',
+      assignee: user.name || 'Unassigned',
+      status:
+        task.status ||
+        (typeof task.completed === 'boolean'
+          ? task.completed
+            ? 'Done'
+            : task.id % 2 === 0
+            ? 'In Progress'
+            : 'Todo'
+          : 'Todo'),
+      date: task.date || task.dueDate || buildDate(task.id),
+    };
+  });
+};
+
 const KanbanBoard = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,19 +89,19 @@ const KanbanBoard = () => {
   useEffect(() => {
     const fetchBoardData = async () => {
       try {
-        const response = await axios.get('/mock-data.json');
-        const { projects = [], users = [], tasks = [] } = response.data;
+        const [projectsRes, usersRes, tasksRes] = await Promise.all([
+          axios.get(buildResourceUrl('projects')),
+          axios.get(buildResourceUrl('users')),
+          axios.get(buildResourceUrl('tasks')),
+        ]);
 
-        const mappedTasks = tasks.map((task) => ({
-          ...task,
-          project: projects.find((project) => project.id === task.projectId)?.name || 'Unknown project',
-          assignee: users.find((user) => user.id === task.assigneeId)?.name || 'Unassigned',
-          status: task.status || 'Todo',
-        }));
+        const projects = normalizeList(projectsRes.data);
+        const users = normalizeList(usersRes.data);
+        const tasks = normalizeList(tasksRes.data);
 
-        setTasks(mappedTasks);
+        setTasks(mapTaskData(tasks, projects, users));
       } catch (fetchError) {
-        setError('Unable to load Kanban data.');
+        setError('Unable to load Kanban data from API.');
         console.error(fetchError);
       } finally {
         setLoading(false);
