@@ -1,32 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Header from './Header';
 import './Layout.css';
-
-const Sidebar = () => (
-  <div className="sidebar">
-    <img src="./src/assets/Expanded-Logo-Dark-1.png" alt="Logo" style={{ height: '40px', backgroundColor: 'black', cursor: 'pointer' }} />
-    {/* <ul>
-      <li>Dashboard</li>
-      <li>Projects</li>
-      <li>Tasks</li>
-      <li>Team</li>
-      <li className="active">Kanban</li>
-    </ul> */}
-  </div>
-);
-
-// const Header = () => (
-//   <div className="header">
-//     <div>
-//       <div className="head_icon">KANBAN</div>
-//       <span className="head_title">
-//         <img src="./src/assets/Expanded-Logo-Dark-1.png" alt="Logo" style={{ height: '32px', backgroundColor: 'transparent' }} />
-//       </span>
-//     </div>
-//   </div>
-// );
-
-
 
 const KanbanCard = ({ title, project, assignee, date, statusClass }) => (
   <div className={`kanban-card ${statusClass}`}>
@@ -39,38 +14,79 @@ const KanbanCard = ({ title, project, assignee, date, statusClass }) => (
   </div>
 );
 
+const statusColumns = [
+  { key: 'Todo', label: 'TO DO', className: 'status-pending' },
+  { key: 'In Progress', label: 'IN PROGRESS', className: 'status-progress' },
+  { key: 'Done', label: 'DONE', className: 'status-done' },
+];
+
 const KanbanBoard = () => {
-  const tasks = {
-    todo: [
-      { title: "API Integration", project: "proj‑1", assignee: "Vivek", date: "15 Apr" },
-      { title: "Data Pipeline", project: "proj‑2", assignee: "Ujjawal", date: "15 Apr" },
-      { title: "Data Pipeline", project: "proj‑2", assignee: "Rahul", date: "15 Apr" },
-    ],
-    inProgress: [
-      { title: "Dashboard UI", project: "proj‑2", assignee: "Aman", date: "10 Apr" },
-      { title: "Authentication api", project: "proj‑2", assignee: "Ujjawal", date: "30 Apr" },
-    ],
-    done: [
-      { title: "Login Module", project: "proj‑1", assignee: "Rahul", date: "05 Apr" },
-    ]
-  };
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBoardData = async () => {
+      try {
+        const response = await axios.get('/mock-data.json');
+        const { projects = [], users = [], tasks = [] } = response.data;
+
+        const mappedTasks = tasks.map((task) => ({
+          ...task,
+          project: projects.find((project) => project.id === task.projectId)?.name || 'Unknown project',
+          assignee: users.find((user) => user.id === task.assigneeId)?.name || 'Unassigned',
+          status: task.status || 'Todo',
+        }));
+
+        setTasks(mappedTasks);
+      } catch (fetchError) {
+        setError('Unable to load Kanban data.');
+        console.error(fetchError);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBoardData();
+  }, []);
+
+  const tasksByStatus = statusColumns.reduce((acc, column) => {
+    acc[column.key] = [];
+    return acc;
+  }, {});
+
+  tasks.forEach((task) => {
+    const status = statusColumns.some((column) => column.key === task.status) ? task.status : 'Todo';
+    tasksByStatus[status].push(task);
+  });
+
+  if (loading) {
+    return <div className="kanban-board">Loading board...</div>;
+  }
+
+  if (error) {
+    return <div className="kanban-board">{error}</div>;
+  }
 
   return (
     <div className="kanban-board">
-      <div className="kanban-column">
-        <div className="kanban-header">TO DO({tasks.todo.length})</div>
-        {tasks.todo.map((task, i) => <KanbanCard key={i} {...task} statusClass="status-pending" />)}
-      </div>
-
-      <div className="kanban-column">
-        <div className="kanban-header">IN PROGRESS({tasks.inProgress.length})</div>
-        {tasks.inProgress.map((task, i) => <KanbanCard key={i} {...task} statusClass="status-progress" />)}
-      </div>
-
-      <div className="kanban-column">
-        <div className="kanban-header">DONE({tasks.done.length})</div>
-        {tasks.done.map((task, i) => <KanbanCard key={i} {...task} statusClass="status-done" />)}
-      </div>
+      {statusColumns.map((column) => (
+        <div className="kanban-column" key={column.key}>
+          <div className="kanban-header">
+            {column.label}({tasksByStatus[column.key].length})
+          </div>
+          {tasksByStatus[column.key].map((task) => (
+            <KanbanCard
+              key={task.id}
+              title={task.title}
+              project={task.project}
+              assignee={task.assignee}
+              date={task.date}
+              statusClass={column.className}
+            />
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
@@ -78,7 +94,6 @@ const KanbanBoard = () => {
 export default function KanbanPage() {
   return (
     <div className="container">
-      {/* <Sidebar /> */}
       <div className="main">
         <Header />
         <div className="content">

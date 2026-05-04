@@ -1,0 +1,21 @@
+{
+  "projects": [
+    { "id": 1, "name": "Website Redesign" },
+    { "id": 2, "name": "Mobile App" },
+    { "id": 3, "name": "Analytics Engine" }
+  ],
+  "users": [
+    { "id": 1, "name": "Ayush" },
+    { "id": 2, "name": "Ujjawal" },
+    { "id": 3, "name": "Rahul" },
+    { "id": 4, "name": "Arman" }
+  ],
+  "tasks": [
+    { "id": 101, "title": "API Integration", "projectId": 1, "assigneeId": 1, "status": "Todo", "date": "15 Apr" },
+    { "id": 102, "title": "Data Pipeline", "projectId": 3, "assigneeId": 2, "status": "Todo", "date": "15 Apr" },
+    { "id": 103, "title": "Data Pipeline", "projectId": 3, "assigneeId": 3, "status": "Todo", "date": "15 Apr" },
+    { "id": 104, "title": "Dashboard UI", "projectId": 3, "assigneeId": 4, "status": "In Progress", "date": "10 Apr" },
+    { "id": 105, "title": "Authentication api", "projectId": 3, "assigneeId": 2, "status": "In Progress", "date": "30 Apr" },
+    { "id": 106, "title": "Login Module", "projectId": 1, "assigneeId": 3, "status": "Done", "date": "05 Apr" }
+  ]
+}

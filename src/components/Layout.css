@@ -175,10 +175,6 @@ tr {
 
 
 
-
-const style = document.createElement("style");
-style.innerHTML = `
-
 /* ===== Global SLM vs LLM background ===== */
 body {
   background:
