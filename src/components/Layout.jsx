@@ -23,7 +23,7 @@ const statusColumns = [
 const DEFAULT_ENDPOINTS = {
   projects: 'https://jsonplaceholder.typicode.com/albums?_limit=5',
   users: 'https://jsonplaceholder.typicode.com/users',
-  tasks: 'https://jsonplaceholder.typicode.com/todos?_limit=12',
+  tasks: 'https://jsonplaceholder.typicode.com/todos?_limit=8',
 };
 
 const buildResourceUrl = (resource) => {
